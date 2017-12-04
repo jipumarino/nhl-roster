@@ -1,0 +1,53 @@
+<style>
+  img.team-logo { height: 90px; }
+  img.player-photo {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    box-shadow: 0 0 1px 1px #999;
+    margin-left: 7px;
+    margin-right: 5px;
+  }
+  table.players-table { border-collapse: collapse; }
+  table.players-table td { border: 1px solid black; padding: 5px;}
+  table.players-table th { border: 1px solid black; padding: 5px;}
+
+</style>
+
+<% @data.each do |team| %>
+  <svg>
+    <use xlink:href="teams_logos.svg#<%= team["logo_xlink_href"] %>"></use>
+  </svg>
+  <h1><%= team["city"] %> <%= team["name"] %></h1>
+
+  <table class="players-table">
+    <tr>
+      <th>Photo</th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Number</th>
+      <th>Position</th>
+      <th>Shoots</th>
+      <th>Height</th>
+      <th>Weight</th>
+      <th>Birthdate</th>
+      <th>Hometown</th>
+    </tr>
+    <% team["players"].each do |player| %>
+      <% birthdate = Time.strptime(player["birthdate"], "%Y-%m-%d") %>
+      <tr>
+        <td><img class="player-photo" src="<%= player["photo_url"] %>" onError="this.onerror=null;this.src='skater.jpg';"></td>
+        <td><%= player["first_name"] %></td>
+        <td><%= player["last_name"] %></td>
+        <td><%= player["number"] %></td>
+        <td><%= player["position"] %></td>
+        <td><%= player["shoots"] %></td>
+        <td><%= player["height_feet"] %>'   <%= player["height_inches"] %>"</td>
+        <td><%= player["weight"] %> lb</td>
+        <td><%= birthdate.strftime("%b %-d, %Y") %></td>
+        <td><%= player["hometown"] %></td>
+      </tr>
+    <% end %>
+  </table>
+
+<% end %>
