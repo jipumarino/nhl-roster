@@ -1,4 +1,10 @@
 <style>
+  
+  body {
+    font-family: Helvetica;
+    font-size: 5px;
+  }
+
   img.team-logo { height: 90px; }
   img.player-photo {
     height: 40px;
@@ -8,46 +14,117 @@
     margin-left: 7px;
     margin-right: 5px;
   }
-  table.players-table { border-collapse: collapse; }
-  table.players-table td { border: 1px solid black; padding: 5px;}
-  table.players-table th { border: 1px solid black; padding: 5px;}
+  table.players-table {
+    border-collapse: collapse;
+    /*width: 930px;*/
+  }
+  table.players-table td {
+    border: 1px solid black;
+    padding: 0 5px;
+    font-size: 10px;
+  }
+  table.players-table th {
+    border: 1px solid black;
+    padding: 0 5px;
+    font-size: 10px;
+  }
+
+  .team-data {
+    page-break-inside: avoid;
+    /*display:inline-block;*/
+    /*width:1680px;*/
+    /*height:1450px;*/
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  .team-logo {
+    width: 20px;
+    height: 30px;
+    /*margin-right: 20px;*/
+    /*display: inline-block;*/
+  }
+
+  .team-name {
+    display: inline-block;
+    font-weight: bold;
+  }
+
+  .player-number {
+    width: 10px;
+  }
+
+  .player-first-name {
+    width: 70px;
+  }
+
+  .player-last-name {
+    width: 80px;
+  }
+
+  .player-height {
+    width: 20px;
+  }
+
+  .player-birthdate {
+    width: 50px;
+  }
+
+  .player-hometown {
+    width: 150px;
+  }
+
+  .team-header {
+    margin-top: 20px;
+  }
 
 </style>
 
 <% @data.each do |team| %>
-  <svg>
-    <use xlink:href="teams_logos.svg#<%= team["logo_xlink_href"] %>"></use>
-  </svg>
-  <h1><%= team["city"] %> <%= team["name"] %></h1>
-
-  <table class="players-table">
-    <tr>
-      <th>Photo</th>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Number</th>
-      <th>Position</th>
-      <th>Shoots</th>
-      <th>Height</th>
-      <th>Weight</th>
-      <th>Birthdate</th>
-      <th>Hometown</th>
-    </tr>
-    <% team["players"].each do |player| %>
-      <% birthdate = Time.strptime(player["birthdate"], "%Y-%m-%d") %>
+  <div class="team-data">
+    <table class="team-header">
       <tr>
-        <td><img class="player-photo" src="<%= player["photo_url"] %>" onError="this.onerror=null;this.src='skater.jpg';"></td>
-        <td><%= player["first_name"] %></td>
-        <td><%= player["last_name"] %></td>
-        <td><%= player["number"] %></td>
-        <td><%= player["position"] %></td>
-        <td><%= player["shoots"] %></td>
-        <td><%= player["height_feet"] %>'   <%= player["height_inches"] %>"</td>
-        <td><%= player["weight"] %> lb</td>
-        <td><%= birthdate.strftime("%b %-d, %Y") %></td>
-        <td><%= player["hometown"] %></td>
+        <td>
+          <svg class="team-logo">
+            <use xlink:href="teams_logos.svg#<%= team["logo_xlink_href"] %>"></use>
+          </svg>
+        </td>
+        <td>
+          <div class="team-name"><%= team["city"] %> <%= team["name"] %></div>
+        </td>
       </tr>
-    <% end %>
-  </table>
+    </table>
+    <table class="players-table">
+      <tr>
+        <th></th>
+        <th colspan="2">Name</th>
+        <th>Pos</th>
+        <th>Sh</th>
+        <th>Ht</th>
+        <th>Wt</th>
+        <th>Birthdate</th>
+        <th>Hometown</th>
+      </tr>
+      <% team["players"].each do |player| %>
+        <% birthdate = Time.strptime(player["birthdate"], "%Y-%m-%d") %>
+        <tr>
+          <td class="right player-number">
+            <!-- <img class="player-photo" src="<%= player["photo_url"] %>" onError="this.onerror=null;this.src='skater.jpg';"> -->
+            <%= player["number"] %>
+          </td>
+          <td class="player-first-name"><%= player["first_name"] %></td>
+          <td class="player-last-name"><%= player["last_name"] %></td>
+          <td><%= player["position"] %></td>
+          <td><%= player["shoots"] %></td>
+          <td class="player-height"><%= player["height_feet"] %>'<%= player["height_inches"] %>"</td>
+          <td class="right"><%= player["weight"] %> lb</td>
+          <td class="player-birthdate"><%= birthdate.strftime("%b %-d, %y") %></td>
+          <td class="player-hometown"><%= player["hometown"] %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
 
 <% end %>
