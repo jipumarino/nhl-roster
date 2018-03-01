@@ -8,6 +8,7 @@ def get_logo_and_players_for_roster_url(url)
   doc = Nokogiri::HTML(open(url))
 
   logo_url = doc.at(".megamenu-club-logobar__logo img")["src"]
+  logo_url = "http:" + logo_url if logo_url =~ %r{^//}
 
   tables = doc.css("table.data-table")
 
@@ -50,21 +51,28 @@ def get_teams
   teams_data = doc.css(".ticket-team")
 
   teams_data.map do |data|
+    roster_url = data.css(".ticket-link_link")[1]["href"]
+    roster_url = "https://www.nhl.com" + roster_url if roster_url !~ %r{^https?://}
+
     {
       city: data.at(".team-city span.team-city").content,
       name: data.at(".team-city span.team-name").content,
-      roster_url: "https://www.nhl.com" + data.css(".ticket-link_link")[1]["href"]
+      roster_url: roster_url,
+      logo_xlink_href: data.css(".ticket-team_logo svg use")[0]["xlink:href"].delete('#')
     }
   end
 end
 
 def get_all_data
   teams = get_teams
-  data = teams.each do |team|
+  teams.each do |team|
     puts "Scrapping #{team[:city]} #{team[:name]}"
-    team[:logo_url], team[:players] = get_logo_and_players_for_roster_url(team[:roster_url])
+    logo_url, players = get_logo_and_players_for_roster_url(team[:roster_url])
+    team[:logo_url] = logo_url
+    team[:players] = players
   end
   teams
 end
 
-
+all_data = get_all_data
+File.write("nhl_data.json", JSON.pretty_generate(all_data))
